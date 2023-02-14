@@ -16,7 +16,7 @@ cloudinary.config({
 
 /* GET users listing. */
 router.get('/', function(req, res) {
-  cloudinary.api.resources().then(data => console.log(data))
-});
-
+  cloudinary.api.resources_by_asset_folder('Portofolio', { metadata: true }, 
+function(error, result) {console.log(result, error); });
+})
 module.exports = router;
