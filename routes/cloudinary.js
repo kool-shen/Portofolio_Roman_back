@@ -12,15 +12,36 @@ cloudinary.config({
   api_key: api_key,
   api_secret: api_secret,
 });
-
+/// get folder + useful resources ///
 router.get("/", function (req, res) {
   cloudinary.api.resources({ max_results: 500 }).then((data) => {
     const filteredData = data.resources.map((item) => {
       return {
         collection: item.folder.split("/").pop(),
         src: item.url,
+        height: item.height,
+        width: item.width,
       };
     });
+    res.json(filteredData);
+    console.log(filteredData);
+  });
+});
+
+/// get folder / album names for index page
+
+router.get("/album", function (req, res) {
+  cloudinary.api.resources({ max_results: 500 }).then((data) => {
+    const filteredData = data.resources
+      .map((item) => {
+        return {
+          collection: item.folder.split("/").pop(),
+        };
+      })
+      .filter(
+        (element, index, self) =>
+          index === self.findIndex((t) => t.collection === element.collection)
+      );
     res.json(filteredData);
     console.log(filteredData);
   });
