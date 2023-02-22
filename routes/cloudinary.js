@@ -16,9 +16,11 @@ cloudinary.config({
 router.get("/", function (req, res) {
   cloudinary.api.resources({ max_results: 500 }).then((data) => {
     const filteredData = data.resources.map((item) => {
+      const urlOptions = { quality: "auto" };
+      const url = cloudinary.url(item.public_id, urlOptions);
       return {
         collection: item.folder.split("/").pop(),
-        src: item.url,
+        src: url,
         height: item.height,
         width: item.width,
       };
@@ -30,18 +32,18 @@ router.get("/", function (req, res) {
 
 /// get folder / album names for index page
 
-router.get("/album", function (req, res) {
+router.get("/", function (req, res) {
   cloudinary.api.resources({ max_results: 500 }).then((data) => {
-    const filteredData = data.resources
-      .map((item) => {
-        return {
-          collection: item.folder.split("/").pop(),
-        };
-      })
-      .filter(
-        (element, index, self) =>
-          index === self.findIndex((t) => t.collection === element.collection)
-      );
+    const filteredData = data.resources.map((item) => {
+      const urlOptions = { quality: "auto", upload_prefix: "q_auto/" };
+      const url = cloudinary.url(item.public_id, urlOptions);
+      return {
+        collection: item.folder.split("/").pop(),
+        src: url,
+        height: item.height,
+        width: item.width,
+      };
+    });
     res.json(filteredData);
     console.log(filteredData);
   });
