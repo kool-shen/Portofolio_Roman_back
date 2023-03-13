@@ -12,11 +12,33 @@ cloudinary.config({
   api_key: api_key,
   api_secret: api_secret,
 });
-/// get folder + useful resources ///
+
+/// Photos de la Home ///
+router.get("/homepage", function (req, res) {
+  cloudinary.api.resources({ max_results: 500 }).then((data) => {
+    const filteredData = data.resources
+      .filter((item) => {
+        return item.folder.split("/").pop() === "Homepage";
+      })
+      .map((item) => {
+        return {
+          collection: item.folder.split("/").pop(),
+          src: item.url,
+          height: item.height,
+          width: item.width,
+        };
+      });
+    res.json(filteredData);
+    console.log(filteredData);
+  });
+});
+
+/// get folder / album names for index page
+
 router.get("/", function (req, res) {
   cloudinary.api.resources({ max_results: 500 }).then((data) => {
     const filteredData = data.resources.map((item) => {
-      const urlOptions = { quality: "auto" };
+      const urlOptions = { quality: "auto", upload_prefix: "q_auto/" };
       const url = cloudinary.url(item.public_id, urlOptions);
       return {
         collection: item.folder.split("/").pop(),
