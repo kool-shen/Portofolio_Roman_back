@@ -30,23 +30,4 @@ router.get("/", function (req, res) {
   });
 });
 
-/// get folder / album names for index page
-
-router.get("/", function (req, res) {
-  cloudinary.api.resources({ max_results: 500 }).then((data) => {
-    const filteredData = data.resources.map((item) => {
-      const urlOptions = { quality: "auto", upload_prefix: "q_auto/" };
-      const url = cloudinary.url(item.public_id, urlOptions);
-      return {
-        collection: item.folder.split("/").pop(),
-        src: url,
-        height: item.height,
-        width: item.width,
-      };
-    });
-    res.json(filteredData);
-    console.log(filteredData);
-  });
-});
-
 module.exports = router;
